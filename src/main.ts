@@ -46,7 +46,7 @@ function get_present_time(name: 'short' | 'medium' | 'long') {
 
 function create_instruction_header() {
   const res = create_div();
-  res.style.height = '32px';
+  res.style.height = '64px';
   res.style.width = '100%';
   return res;
 }
@@ -73,7 +73,8 @@ function create_canvas() {
   canvas.height = h;
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
-  canvas.style.border = 'solid 1px';
+  canvas.style.border = 'solid 2px';
+  canvas.style.outline = 'none';
   return canvas;
 }
 
@@ -93,8 +94,10 @@ function create_page(): Page {
 
 function draw_starting_line(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
   const f = CANVAS_INFO.rate_begin_fraction;
+  ctx.beginPath();
   ctx.moveTo(canvas.width * f, 0);
   ctx.lineTo(canvas.width * f, canvas.height);
+  ctx.closePath();
   ctx.stroke();
 }
 
@@ -135,7 +138,7 @@ async function prepare_to_rate(page: Page): Promise<void> {
     const canvas = page.canvas;
     const ctx = canvas.getContext('2d')!;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.rect(0, 0, canvas.width, canvas.height);
+    // ctx.rect(0, 0, canvas.width, canvas.height);
     // ctx.fillStyle = `rgb(0, 255, 0)`;
     // ctx.fill();
     draw_starting_line(canvas, ctx);
@@ -187,7 +190,7 @@ async function rate(page: Page, ims: HTMLImageElement[]): Promise<number> {
         ctx.drawImage(ims[rating - 1], 0, 0);
       }
 
-      draw_starting_line(canvas, ctx);
+      // draw_starting_line(canvas, ctx);
     }
 
     function move_listener(e: MouseEvent) {
