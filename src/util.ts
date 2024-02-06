@@ -1,3 +1,9 @@
+export function draw_image_centered(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+  const dx = Math.max(0, canvas.width - img.width) * 0.5;
+  const dy = Math.max(0, canvas.height - img.height) * 0.5;
+  ctx.drawImage(img, dx, dy);
+}
+
 export async function prepare_images(parent: HTMLElement, im_ps: string[]): Promise<HTMLImageElement[]> {
   return Promise.all(im_ps.map(load_one_image));
 
@@ -28,7 +34,7 @@ export async function show_image(
       function draw_func(draw_im: boolean) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (draw_im) {
-          ctx.drawImage(img, 0, 0);
+          draw_image_centered(canvas, ctx, img);
         }
         if (frame_index === 0) {
           t0 = performance.now();
