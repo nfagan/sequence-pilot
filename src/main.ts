@@ -214,7 +214,6 @@ async function rate(page: Page, ims: HTMLImageElement[]): Promise<RateResult> {
 
     const canvas = page.canvas;
     const ctx = canvas.getContext('2d')!;
-    const f = CANVAS_INFO.rate_begin_fraction;
 
     function get_rating(e: MouseEvent) {
       const r = canvas.getBoundingClientRect();
@@ -335,6 +334,15 @@ function make_trial_descs(im_ps: string[]) {
   return trial_descs;
 }
 
+function to_trial_params(trial_desc: TrialDesc, ims: HTMLImageElement[], im_ps: string[]): TrialParams {
+  return {
+    desc: trial_desc,
+    sequence_imgs: select_images_by_urls(trial_desc.im_urls, im_ps, ims),
+    rating_imgs: ims,
+    fix_img: ims[ims.length - 1]
+  };
+}
+
 async function main() {
   configure_body();
 
@@ -342,19 +350,11 @@ async function main() {
 
   await run_prepare_screen(document.body);
 
+  const trial_descs = make_trial_descs(im_ps);
+  const trial_params = trial_descs.map(desc => to_trial_params(desc, ims, im_ps));
+
   const page = create_page();
   document.body.appendChild(page.container);
-
-  const trial_descs = make_trial_descs(im_ps);
-  const trial_params: TrialParams[] = trial_descs.map(desc => {
-    const params: TrialParams = {
-      desc,
-      sequence_imgs: select_images_by_urls(desc.im_urls, im_ps, ims),
-      rating_imgs: ims,
-      fix_img: ims[ims.length - 1]
-    }
-    return params;
-  })
 
   for (let i = 0; i < trial_params.length; i++) {
     await trial(page, trial_params[i]);
